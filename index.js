@@ -3,7 +3,7 @@
 let EtekcityClient = require('./lib/client');
 let Accessory, Service, Characteristic, UUIDGen;
 
-module.exports = function(homebridge) {
+module.exports = function (homebridge) {
     Accessory = homebridge.platformAccessory;
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
@@ -29,7 +29,7 @@ function VeseyncPlugPlatform(log, config, api) {
     this.client = new EtekcityClient(log);
 }
 
-VeseyncPlugPlatform.prototype.configureAccessory = function(accessory) {
+VeseyncPlugPlatform.prototype.configureAccessory = function (accessory) {
     let accessoryId = accessory.context.id;
     if (this.debug) this.log("configureAccessory: " + accessoryId);
 
@@ -50,20 +50,20 @@ VeseyncPlugPlatform.prototype.configureAccessory = function(accessory) {
     this.accessories[accessoryId] = accessory;
 };
 
-VeseyncPlugPlatform.prototype.didFinishLaunching = function() {
+VeseyncPlugPlatform.prototype.didFinishLaunching = function () {
     let that = this;
 
     this.deviceDiscovery();
     setInterval(that.deviceDiscovery.bind(that), this.cache_timeout * 6000);
 };
 
-VeseyncPlugPlatform.prototype.deviceDiscovery = function() {
+VeseyncPlugPlatform.prototype.deviceDiscovery = function () {
     let me = this;
     if (me.debug) me.log("DeviceDiscovery invoked");
 
-    this.client.login(this.username, this.password).then( () => {
+    this.client.login(this.username, this.password).then(() => {
         return this.client.getDevices();
-    }).then( devices => {
+    }).then(devices => {
         if (me.debug) me.log("Adding discovered devices");
         for (let i in devices) {
             let existing = me.accessories[devices[i].id];
@@ -80,7 +80,9 @@ VeseyncPlugPlatform.prototype.deviceDiscovery = function() {
         if (devices) {
             for (let index in me.accessories) {
                 var acc = me.accessories[index];
-                var found = devices.find( (device) => { return device.id.includes(index); });
+                var found = devices.find((device) => {
+                    return device.id.includes(index);
+                });
                 if (!found) {
                     me.log("Previously configured accessory not found, removing", index);
                     me.removeAccessory(me.accessories[index]);
@@ -97,7 +99,7 @@ VeseyncPlugPlatform.prototype.deviceDiscovery = function() {
     });
 };
 
-VeseyncPlugPlatform.prototype.addAccessory = function(data) {
+VeseyncPlugPlatform.prototype.addAccessory = function (data) {
     if (!this.accessories[data.id]) {
         let uuid = UUIDGen.generate(data.id);
         var newAccessory = new Accessory(data.id, uuid, 8);
@@ -132,7 +134,7 @@ VeseyncPlugPlatform.prototype.addAccessory = function(data) {
  * If the accessoryId is not passed in, attempt to find the accessory id from the context. In the case where
  * the id is still not determined, attempt to remove the device from the homebridge api to avoid crashes. 
  */
-VeseyncPlugPlatform.prototype.removeAccessory = function(accessory, accessoryId = undefined) {
+VeseyncPlugPlatform.prototype.removeAccessory = function (accessory, accessoryId = undefined) {
     if (accessory) {
         let id = accessoryId !== undefined ? accessoryId : (accessory.context === undefined ? undefined : accessory.context.id);
         if (this.debug) this.log("Removing accessory", id);
@@ -150,7 +152,7 @@ VeseyncPlugPlatform.prototype.removeAccessory = function(accessory, accessoryId 
     }
 };
 
-VeseyncPlugPlatform.prototype.setService = function(accessory) {
+VeseyncPlugPlatform.prototype.setService = function (accessory) {
     accessory.getService(Service.Outlet)
         .getCharacteristic(Characteristic.On)
         .on('set', this.setPowerState.bind(this, accessory.context))
@@ -159,7 +161,7 @@ VeseyncPlugPlatform.prototype.setService = function(accessory) {
     accessory.on('identify', this.identify.bind(this, accessory.context));
 };
 
-VeseyncPlugPlatform.prototype.getInitState = function(accessory, data) {
+VeseyncPlugPlatform.prototype.getInitState = function (accessory, data) {
     let info = accessory.getService(Service.AccessoryInformation);
 
     accessory.context.manufacturer = "Etekcity";
@@ -175,47 +177,56 @@ VeseyncPlugPlatform.prototype.getInitState = function(accessory, data) {
         .getValue();
 };
 
-VeseyncPlugPlatform.prototype.setPowerState = function(thisPlug, powerState, callback) {
+VeseyncPlugPlatform.prototype.setPowerState = function (thisPlug, powerState, callback) {
     let that = this;
     if (this.debug) this.log("Sending device status change");
 
-    return this.client.login(this.username, this.password).then( () => {
+    return this.client.login(this.username, this.password).then(() => {
         return this.client.getDevices();
-    }).then( devices => {
-        return devices.find( (device) => { return device.name.includes(thisPlug.name); });
-    }).then( (device) => {
+    }).then(devices => {
+        return devices.find((device) => {
+            return device.name.includes(thisPlug.name);
+        });
+    }).then((device) => {
         thisPlug.status = device.status;
-        if (device.status == 'open' && powerState == false) {
-            return this.client.turnOff(device.id);
+        if (device.status == 'on' && powerState == false) {
+            return this.client.turnDevice(device, "off");
         }
 
-        if (device.status == 'break' && powerState == true) {
-            return this.client.turnOn(device.id);
+        if (device.status == 'off' && powerState == true) {
+            return this.client.turnDevice(device, "on");
         }
-    }).then( () => {
+    }).then(() => {
         callback();
-    }).catch( (err) => {
+    }).catch((err) => {
+        if (err == 'Error: No Content') {
+            callback();
+            return;
+        }
+        this.log(err);
         this.log("Failed to set power state to", powerState);
         callback(err);
     });
 };
 
-VeseyncPlugPlatform.prototype.getPowerState = function(thisPlug, callback) {
+VeseyncPlugPlatform.prototype.getPowerState = function (thisPlug, callback) {
     if (this.accessories[thisPlug.id]) {
         this.log("Getting Status: %s %s", thisPlug.id, thisPlug.name)
 
-        return this.client.login(this.username, this.password).then( () => {
+        return this.client.login(this.username, this.password).then(() => {
             return this.client.getDevices();
-        }).then( devices => {
-            return devices.find( (device) => { return device.name.includes(thisPlug.name); });
-        }).then( (device) => {
+        }).then(devices => {
+            return devices.find((device) => {
+                return device.name.includes(thisPlug.name);
+            });
+        }).then((device) => {
             if (typeof device === 'undefined') {
                 if (this.debug) this.log("Removing undefined device", thisPlug.name);
                 this.removeAccessory(thisPlug)
             } else {
                 thisPlug.status = device.status;
                 if (this.debug) this.log("getPowerState complete");
-                callback(null, device.status == 'open');
+                callback(null, device.status == 'on');
             }
         });
     } else {
@@ -223,7 +234,7 @@ VeseyncPlugPlatform.prototype.getPowerState = function(thisPlug, callback) {
     }
 };
 
-VeseyncPlugPlatform.prototype.identify = function(thisPlug, paired, callback) {
+VeseyncPlugPlatform.prototype.identify = function (thisPlug, paired, callback) {
     this.log("Identify requested for " + thisPlug.name);
     callback();
 }
