@@ -81,7 +81,7 @@ VeseyncPlugPlatform.prototype.deviceDiscovery = function () {
             for (let index in me.accessories) {
                 var acc = me.accessories[index];
                 var found = devices.find((device) => {
-                    return device.id.includes(index);
+                    return device.id == index;
                 });
                 if (!found) {
                     me.log("Previously configured accessory not found, removing", index);
