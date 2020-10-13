@@ -10,6 +10,7 @@
     "type": "git",
     "url": "git://github.com/mickgiles/homebridge-vesync"
   },
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
   "bugs": {
     "url": "https://github.com/mickgiles/homebridge-vesync/issues"
   },
