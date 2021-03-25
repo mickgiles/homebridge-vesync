@@ -1,0 +1,25 @@
+{
+  "pluginAlias": "VesyncPlug",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "Platform plugin for Etekcity Wifi Smart Plugs",
+  "schema": {
+      "type": "object",
+      "properties": {
+          "username": {
+              "title": "Username",
+              "type": "string",
+              "required": true,
+              "default": "",
+              "description": "Your username/email for your Vesync account"
+          },
+          "password": {
+              "title": "Password",
+              "type": "string",
+              "required": true,
+              "default": "",
+              "description": "Your password for your Vesync account"
+          }
+      }
+  }
+}
