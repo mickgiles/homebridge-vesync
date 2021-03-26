@@ -65,20 +65,19 @@ VeseyncPlugPlatform.prototype.deviceDiscovery = function () {
     this.client.login(this.username, this.password).then(() => {
         return this.client.getDevices().filter((device) => {
             return supportedDevices.includes(device.type); 
-        });
-    }).then(devices => {
-        if (me.debug) me.log("Adding discovered devices");
-        for (let i in devices) {
-            let existing = me.accessories[devices[i].id];
+        }).then(devices => {
+            if (me.debug) me.log("Adding discovered devices");
+            for (let i in devices) {
+                let existing = me.accessories[devices[i].id];
 
-            if (!existing) {
-                me.log("Adding device: ", devices[i].id, devices[i].name);
-                me.addAccessory(devices[i]);
-            } else {
-                if (me.debug) me.log("Skipping existing device", i);
+                if (!existing) {
+                    me.log("Adding device: ", devices[i].id, devices[i].name);
+                    me.addAccessory(devices[i]);
+                } else {
+                    if (me.debug) me.log("Skipping existing device", i);
+                }
             }
-        }
-
+        });
         // Check existing accessories exist in vesync devices
         if (devices) {
             for (let index in me.accessories) {
