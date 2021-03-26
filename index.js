@@ -63,41 +63,41 @@ VeseyncPlugPlatform.prototype.deviceDiscovery = function () {
     var supportedDevices = ['wifi-switch-1.3', 'ESW01-USA', 'ESW03-USA', 'ESW01-EU', 'ESW15-USA', 'ESO15-TB'];
 
     this.client.login(this.username, this.password).then(() => {
-        return this.client.getDevices().filter((device) => {
-            return supportedDevices.includes(device.type); 
-        }).then(devices => {
-            if (me.debug) me.log("Adding discovered devices");
-            for (let i in devices) {
-                let existing = me.accessories[devices[i].id];
+        return this.client.getDevices();
+    }).filter((device) => {
+        return supportedDevices.includes(device.type); 
+    }).then(devices => {
+        if (me.debug) me.log("Adding discovered devices");
+        for (let i in devices) {
+            let existing = me.accessories[devices[i].id];
 
-                if (!existing) {
-                    me.log("Adding device: ", devices[i].id, devices[i].name);
-                    me.addAccessory(devices[i]);
-                } else {
-                    if (me.debug) me.log("Skipping existing device", i);
+            if (!existing) {
+                me.log("Adding device: ", devices[i].id, devices[i].name);
+                me.addAccessory(devices[i]);
+            } else {
+                if (me.debug) me.log("Skipping existing device", i);
+            }
+        }
+
+        // Check existing accessories exist in vesync devices
+        if (devices) {
+            for (let index in me.accessories) {
+                var acc = me.accessories[index];
+                var found = devices.find((device) => {
+                    return device.id == index;
+                });
+                if (!found) {
+                    me.log("Previously configured accessory not found, removing", index);
+                    me.removeAccessory(me.accessories[index]);
+                } else if (found.name != acc.context.name) {
+                    me.log("Accessory name does not match device name, got " + found.name + " expected " + acc.context.name);
+                    me.removeAccessory(me.accessories[index]);
+                    me.addAccessory(found);
+                    me.log("Accessory removed & readded!");
                 }
             }
+        }
 
-            // Check existing accessories exist in vesync devices
-            if (devices) {
-                for (let index in me.accessories) {
-                    var acc = me.accessories[index];
-                    var found = devices.find((device) => {
-                        return device.id == index;
-                    });
-                    if (!found) {
-                        me.log("Previously configured accessory not found, removing", index);
-                        me.removeAccessory(me.accessories[index]);
-                    } else if (found.name != acc.context.name) {
-                        me.log("Accessory name does not match device name, got " + found.name + " expected " + acc.context.name);
-                        me.removeAccessory(me.accessories[index]);
-                        me.addAccessory(found);
-                        me.log("Accessory removed & readded!");
-                    }
-                }
-            }
-
-        });
         if (me.debug) me.log("Discovery complete");
     });
 };
