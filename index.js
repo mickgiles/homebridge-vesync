@@ -60,9 +60,12 @@ VeseyncPlugPlatform.prototype.didFinishLaunching = function () {
 VeseyncPlugPlatform.prototype.deviceDiscovery = function () {
     let me = this;
     if (me.debug) me.log("DeviceDiscovery invoked");
+    var supportedDevices = ['wifi-switch-1.3', 'ESW01-USA', 'ESW03-USA', 'ESW01-EU', 'ESW15-USA', 'ESO15-TB'];
 
     this.client.login(this.username, this.password).then(() => {
-        return this.client.getDevices();
+        return this.client.getDevices().filter((device) => {
+            return supportedDevices.includes(device.type); 
+        });
     }).then(devices => {
         if (me.debug) me.log("Adding discovered devices");
         for (let i in devices) {
