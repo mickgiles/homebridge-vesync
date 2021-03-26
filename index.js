@@ -77,26 +77,27 @@ VeseyncPlugPlatform.prototype.deviceDiscovery = function () {
                     if (me.debug) me.log("Skipping existing device", i);
                 }
             }
-        });
-        // Check existing accessories exist in vesync devices
-        if (devices) {
-            for (let index in me.accessories) {
-                var acc = me.accessories[index];
-                var found = devices.find((device) => {
-                    return device.id == index;
-                });
-                if (!found) {
-                    me.log("Previously configured accessory not found, removing", index);
-                    me.removeAccessory(me.accessories[index]);
-                } else if (found.name != acc.context.name) {
-                    me.log("Accessory name does not match device name, got " + found.name + " expected " + acc.context.name);
-                    me.removeAccessory(me.accessories[index]);
-                    me.addAccessory(found);
-                    me.log("Accessory removed & readded!");
+
+            // Check existing accessories exist in vesync devices
+            if (devices) {
+                for (let index in me.accessories) {
+                    var acc = me.accessories[index];
+                    var found = devices.find((device) => {
+                        return device.id == index;
+                    });
+                    if (!found) {
+                        me.log("Previously configured accessory not found, removing", index);
+                        me.removeAccessory(me.accessories[index]);
+                    } else if (found.name != acc.context.name) {
+                        me.log("Accessory name does not match device name, got " + found.name + " expected " + acc.context.name);
+                        me.removeAccessory(me.accessories[index]);
+                        me.addAccessory(found);
+                        me.log("Accessory removed & readded!");
+                    }
                 }
             }
-        }
 
+        });
         if (me.debug) me.log("Discovery complete");
     });
 };
