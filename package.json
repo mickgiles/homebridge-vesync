@@ -1,6 +1,6 @@
 {
   "name": "homebridge-vesync-v2",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "A Homebridge plugin for controlling EtekCity smart outlets by issuing commands to the VeSync site. ",
   "main": "index.js",
   "scripts": {
@@ -13,16 +13,16 @@
   "bugs": {
     "url": "https://github.com/mickgiles/homebridge-vesync/issues"
   },
-  "devDependencies": {},
   "engines": {
     "node": ">=6.9.2",
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
     "crypto": "^1.0.1",
+    "deep-setter": "^1.0.1",
+    "deep-value": "^1.0.4",
     "form-data": "^2.3.1",
-    "hyper-request": "^0.1.17",
-    "moment": "^2.24.0"
+    "moment": "^2.29.1"
   },
   "keywords": [
     "siri",
