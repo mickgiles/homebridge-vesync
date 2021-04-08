@@ -20,13 +20,15 @@ function VeseyncPlugPlatform(log, config, api) {
     this.debug = config['debug'] || false;
     this.username = config['username'];
     this.password = config['password'];
+    this.exclude = config['exclude'] ==null ? "" : config['exclude'].split(',');
+
 
     if (api) {
         this.api = api;
         this.api.on('didFinishLaunching', this.didFinishLaunching.bind(this));
     }
 
-    this.client = new EtekcityClient(log);
+    this.client = new EtekcityClient(log, this.exclude);
 }
 
 VeseyncPlugPlatform.prototype.configureAccessory = function (accessory) {

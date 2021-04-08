@@ -19,7 +19,14 @@
               "required": true,
               "default": "",
               "description": "Your password for your Vesync account"
-          }
+          },
+          "exclude": {
+            "title": "Exclude",
+            "type": "string",
+            "required": false,
+            "default": "",
+            "description": "A comma separated list of device models to exclude, e.g. ESL100,ESL100CW,ESWD16"
+        }
       }
   }
 }
