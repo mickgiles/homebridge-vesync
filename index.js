@@ -98,6 +98,8 @@ VeseyncPlugPlatform.prototype.deviceDiscovery = function () {
         }
 
         if (me.debug) me.log("Discovery complete");
+    }).catch((err) => {
+        me.log("ERROR: " + err);
     });
 };
 
