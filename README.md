@@ -1,4 +1,6 @@
 # homebridge-vesync
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
+
 [Homebridge](https://github.com/nfarina/homebridge) platform plugin for Etekcity Wifi Smart Plugs
 https://www.amazon.com/dp/B01M3MYIFS/
 
