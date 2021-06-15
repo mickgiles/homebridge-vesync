@@ -215,7 +215,7 @@ VeseyncPlugPlatform.prototype.setPowerState = function (thisPlug, powerState, ca
 
 VeseyncPlugPlatform.prototype.getPowerState = function (thisPlug, callback) {
     if (this.accessories[thisPlug.id]) {
-        this.log("Getting Status: %s %s", thisPlug.id, thisPlug.name)
+        //this.log("Getting Status: %s %s", thisPlug.id, thisPlug.name)
 
         return this.client.login(this.username, this.password).then(() => {
             return this.client.getDevices();
