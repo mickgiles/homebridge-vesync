@@ -20,7 +20,7 @@ function VeseyncPlugPlatform(log, config, api) {
     this.debug = config['debug'] || false;
     this.username = config['username'];
     this.password = config['password'];
-    this.exclude = config['exclude'] ==null ? "" : config['exclude'].split(',');
+    this.exclude = config['exclude'] == null ? "" : config['exclude'].split(',');
 
 
     if (api) {
@@ -106,7 +106,7 @@ VeseyncPlugPlatform.prototype.deviceDiscovery = function () {
 VeseyncPlugPlatform.prototype.addAccessory = function (data) {
     if (!this.accessories[data.id]) {
         let uuid = UUIDGen.generate(data.id);
-        var newAccessory = new Accessory(data.id, uuid, 8);
+        var newAccessory = new Accessory(data.name, uuid, 8);
 
         newAccessory.context.name = data.name;
         newAccessory.context.id = data.id;
