@@ -1,6 +1,6 @@
 {
   "name": "homebridge-vesync-v2",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "A Homebridge plugin for controlling EtekCity smart outlets by issuing commands to the VeSync site. ",
   "main": "index.js",
   "scripts": {
@@ -32,6 +32,13 @@
     "homebridge-plugin",
     "ios",
     "homekit"
+  ],
+  "maintainers": [
+    {
+      "name": "Mick Giles",
+      "email": "mick@mickgiles.com",
+      "url": "https://github.com/mickgiles"
+    }
   ],
   "author": "Eric Pelkey, Mick Giles",
   "license": "ISC"
