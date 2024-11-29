@@ -1,7 +1,8 @@
 {
   "name": "homebridge-vesync-v2",
-  "version": "2.4.1",
-  "description": "A Homebridge plugin for controlling EtekCity smart outlets by issuing commands to the VeSync site. ",
+  "version": "2.5.2",
+  "description": "A Homebridge plugin for controlling VeSync smart devices including outlets, air purifiers, and humidifiers",
+  "changelog": "Added support for more devices (Air Purifiers, Humidifiers, Smart Plugs). Added compatibility with Homebridge 2.0.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,15 +15,15 @@
     "url": "https://github.com/mickgiles/homebridge-vesync/issues"
   },
   "engines": {
-    "node": ">=6.9.2",
-    "homebridge": ">=0.2.0"
+    "node": ">=14.0.0",
+    "homebridge": ">=1.0.0"
   },
   "dependencies": {
     "crypto": "^1.0.1",
     "deep-setter": "^1.0.1",
     "deep-value": "^1.0.4",
     "form-data": "^2.3.1",
-    "moment": "^2.29.1"
+    "moment": "^2.29.4"
   },
   "keywords": [
     "siri",
@@ -31,7 +32,11 @@
     "homebridge",
     "homebridge-plugin",
     "ios",
-    "homekit"
+    "homekit",
+    "levoit",
+    "smart plug",
+    "air purifier",
+    "humidifier"
   ],
   "maintainers": [
     {
