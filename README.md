@@ -69,6 +69,13 @@ All humidifier models support basic power control (On/Off) only:
   - Power On/Off
   - *Color and brightness controls available in app only*
 
+## Tower Fans
+All tower fan models support basic power control (On/Off) only:
+- LTF-F422S-WUSR (Smart Tower Fan)
+- LTF-F411S-WUS (Smart Tower Fan)
+
+*Note: Additional features like fan speed, oscillation, and modes are available in the VeSync app but not currently supported in this plugin.*
+
 # Feature Support Notes
 1. Power Usage Monitoring: Available in the VeSync app but not synced to HomeKit
 2. Schedules and Timers: Must be configured through the VeSync app
