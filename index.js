@@ -81,9 +81,23 @@ class VeseyncPlugPlatform {
             newAccessory.context = {
                 name: data.name,
                 id: data.id,
+                type: data.type  // Add type to context for service identification
             };
 
-            newAccessory.addService(Service.Outlet, data.name);
+            // Add appropriate service based on device type
+            if (this.isDeviceType(data.type, 'fan')) {
+                newAccessory.addService(Service.Fan, data.name);
+            } else if (this.isDeviceType(data.type, 'airPurifier')) {
+                newAccessory.addService(Service.AirPurifier, data.name);
+            } else if (this.isDeviceType(data.type, 'humidifier')) {
+                newAccessory.addService(Service.HumidifierDehumidifier, data.name);
+            } else if (this.isDeviceType(data.type, 'lightbulb')) {
+                newAccessory.addService(Service.Lightbulb, data.name);
+            } else {
+                // Default to outlet for all other devices (smart plugs, power strips)
+                newAccessory.addService(Service.Outlet, data.name);
+            }
+
             this.setService(newAccessory);
             this.api.registerPlatformAccessories("homebridge-vesync-v2", "VesyncPlug", [newAccessory]);
         }
@@ -91,6 +105,26 @@ class VeseyncPlugPlatform {
         const accessory = this.accessories[data.id];
         this.getInitState(accessory, data);
         this.accessories[data.id] = accessory;
+    }
+
+    isDeviceType(deviceType, category) {
+        const deviceCategories = {
+            fan: ['LTF-F422S-WUSR', 'LTF-F411S-WUS'],
+            airPurifier: [
+                'LV-PUR131S', 'Core200S', 'Core300S', 'Core400S',
+                'Core600S', 'Core100S', 'LAP-C201S-AUSR', 'LAP-C202S-WUSR',
+                'Vital100S', 'Vital200S'
+            ],
+            humidifier: [
+                'Classic300S', 'Classic200S', 'Dual200S', 'OasisMist500S',
+                'LUH-D301S-WUS', 'LV600S', 'Dual100S', 'LUH-A601S-WUSR'
+            ],
+            lightbulb: ['ESL100', 'ESL100CW', 'ESL100MC']
+        };
+
+        return deviceCategories[category]?.some(type => 
+            type === deviceType || deviceType?.startsWith(type)
+        ) || false;
     }
 
     deviceDiscovery() {
@@ -137,12 +171,37 @@ class VeseyncPlugPlatform {
     }
 
     setService(accessory) {
-        accessory.getService(Service.Outlet)
-            .getCharacteristic(Characteristic.On)
-            .on('set', this.setPowerState.bind(this, accessory.context))
-            .on('get', this.getPowerState.bind(this, accessory.context));
+        let service;
+        
+        // Get the appropriate service based on device type
+        if (this.isDeviceType(accessory.context.type, 'fan')) {
+            service = accessory.getService(Service.Fan);
+        } else if (this.isDeviceType(accessory.context.type, 'airPurifier')) {
+            service = accessory.getService(Service.AirPurifier);
+        } else if (this.isDeviceType(accessory.context.type, 'humidifier')) {
+            service = accessory.getService(Service.HumidifierDehumidifier);
+        } else if (this.isDeviceType(accessory.context.type, 'lightbulb')) {
+            service = accessory.getService(Service.Lightbulb);
+        } else {
+            service = accessory.getService(Service.Outlet);
+        }
 
-        accessory.on('identify', this.identify.bind(this, accessory.context));
+        if (!service) {
+            this.log("Could not find service for accessory", accessory.displayName);
+            return;
+        }
+
+        // Set up power control characteristic for all devices
+        service
+            .getCharacteristic(Characteristic.On)
+            .on('get', (callback) => {
+                this.getPowerState(accessory.context, callback);
+            })
+            .on('set', (value, callback) => {
+                this.setPowerState(accessory.context, value, callback);
+            });
+
+        // Additional characteristics could be added here for specific device types
     }
 
     getInitState(accessory, data) {

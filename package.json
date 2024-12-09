@@ -1,6 +1,6 @@
 {
   "name": "homebridge-vesync-v2",
-  "version": "2.5.4",
+  "version": "2.5.5",
   "description": "A Homebridge plugin for controlling VeSync smart devices including outlets, air purifiers, and humidifiers",
   "changelog": "Added support for more devices (Air Purifiers, Humidifiers, Smart Plugs, Tower Fans). Added compatibility with Homebridge 2.0.",
   "main": "index.js",
