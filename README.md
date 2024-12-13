@@ -71,6 +71,7 @@ All humidifier models support basic power control (On/Off) only:
 
 ## Tower Fans
 All tower fan models support basic power control (On/Off) only:
+- LTF-F422S-WUS (Smart Tower Fan)
 - LTF-F422S-WUSR (Smart Tower Fan)
 - LTF-F411S-WUS (Smart Tower Fan)
 

@@ -1,5 +1,7 @@
 "use strict";
 
+const { SUPPORTED_FANS, SUPPORTED_AIR_PURIFIERS, SUPPORTED_HUMIDIFIERS, SUPPORTED_LIGHT_BULBS } = require('./constants.js');
+
 let EtekcityClient = require('./lib/client');
 let Accessory, Service, Characteristic, UUIDGen;
 
@@ -109,17 +111,10 @@ class VeseyncPlugPlatform {
 
     isDeviceType(deviceType, category) {
         const deviceCategories = {
-            fan: ['LTF-F422S-WUSR', 'LTF-F411S-WUS'],
-            airPurifier: [
-                'LV-PUR131S', 'Core200S', 'Core300S', 'Core400S',
-                'Core600S', 'Core100S', 'LAP-C201S-AUSR', 'LAP-C202S-WUSR',
-                'Vital100S', 'Vital200S'
-            ],
-            humidifier: [
-                'Classic300S', 'Classic200S', 'Dual200S', 'OasisMist500S',
-                'LUH-D301S-WUS', 'LV600S', 'Dual100S', 'LUH-A601S-WUSR'
-            ],
-            lightbulb: ['ESL100', 'ESL100CW', 'ESL100MC']
+            fan: SUPPORTED_FANS,
+            airPurifier: SUPPORTED_AIR_PURIFIERS,
+            humidifier: SUPPORTED_HUMIDIFIERS,
+            lightbulb: SUPPORTED_LIGHT_BULBS
         };
 
         return deviceCategories[category]?.some(type => 
@@ -135,6 +130,7 @@ class VeseyncPlugPlatform {
             return this.client.getDevices();
         }).then(devices => {
             if (me.debug) me.log("Adding discovered devices");
+            console.log(devices)
             for (let i in devices) {
                 let existing = me.accessories[devices[i].id];
 
@@ -236,7 +232,7 @@ class VeseyncPlugPlatform {
                 return this.client.turnDevice(device, "off");
             }
 
-            if (device.status == 'off' && powerState == true) {
+            if ((device.status == 'off' || !device.status) && powerState == true) {
                 return this.client.turnDevice(device, "on");
             }
         }).then(() => {
