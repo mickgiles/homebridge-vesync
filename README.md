@@ -1,4 +1,18 @@
-# homebridge-vesync
+# homebridge-vesync (DEPRECATED)
+
+Please see https://github.com/mickgiles/homebridge-tsvesync for the new plugin
+
+==============================
+==============================
+==============================
+==============================
+==============================
+==============================
+==============================
+==============================
+==============================
+
+
 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
 [Homebridge](https://github.com/nfarina/homebridge) platform plugin for VeSync smart devices.
